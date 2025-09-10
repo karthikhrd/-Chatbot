@@ -32,6 +32,7 @@ GROQ_API_KEY   = st.secrets.get("GROQ_API_KEY")
 GOOGLE_API_KEY = st.secrets.get("GOOGLE_API_KEY")
 LLM_MODEL      = st.secrets.get("LLM_MODEL", "gpt-3.5-turbo")
 
+
 if not (OPENAI_API_KEY or GROQ_API_KEY or GOOGLE_API_KEY):
     st.error("⚠️ Missing API keys! Add them in `.streamlit/secrets.toml`")
     st.stop()

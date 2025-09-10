@@ -9,3 +9,4 @@ __pycache__/
 # Ignore Streamlit secrets (local only)
 .streamlit/secrets.toml
 .env
+.env

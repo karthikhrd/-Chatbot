@@ -1,10 +1,11 @@
 import streamlit as st
 
-# Load secrets safely from .streamlit/secrets.toml or Streamlit Cloud
+
 OPENAI_API_KEY = st.secrets["OPENAI_API_KEY"]
 GROQ_API_KEY   = st.secrets["GROQ_API_KEY"]
 GOOGLE_API_KEY = st.secrets["GOOGLE_API_KEY"]
 LLM_MODEL      = st.secrets.get("LLM_MODEL", "gpt-3.5-turbo")
+
 
 
 
