@@ -1,119 +1,48 @@
-# import os
-# import sys
-# from langchain_groq import ChatGroq
-# sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
-
-
-# def get_chatgroq_model():
-#     """Initialize and return the Groq chat model"""
-#     try:
-#         # Initialize the Groq chat model with the API key
-#         groq_model = ChatGroq(
-#             api_key="",
-#             model="",
-#         )
-#         return groq_model
-#     except Exception as e:
-#         raise RuntimeError(f"Failed to initialize Groq model: {str(e)}")
-
-# models/llm.py
-# import os
-# import openai
-# from config.config import OPENAI_API_KEY
-
-
-# openai.api_key = OPENAI_API_KEY
-
-
-# class OpenAIClient:
-# def __init__(self, model: str = "gpt-3.5-turbo"):
-# self.model = model
-
-
-# def chat(self, messages, max_tokens=512, temperature=0.1):
-# try:
-# resp = openai.ChatCompletion.create(
-# model=self.model,
-# messages=messages,
-# max_tokens=max_tokens,
-# temperature=temperature,
-# )
-# return resp["choices"][0]["message"]["content"].strip()
-# except Exception as e:
-# raise RuntimeError(f"OpenAI request failed: {e}")
-
-# models/llm.py
-import os
+import streamlit as st
 from langchain_openai import ChatOpenAI
-from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_groq import ChatGroq
-from config.config import GROQ_API_KEY
-
-from config.config import GROQ_API_KEY
-from langchain_groq import ChatGroq
-from langchain_openai import ChatOpenAI
 from langchain_google_genai import ChatGoogleGenerativeAI
 
-def get_chatgroq_model(model_name="mixtral-8x7b-32768"):
-    """Get Groq chat model, fallback to Gemini/OpenAI if no key"""
-    if GROQ_API_KEY:
-        return ChatGroq(model=model_name, api_key=GROQ_API_KEY)
-    else:
-        print("⚠️ No GROQ_API_KEY found, falling back to Gemini")
-        return ChatGoogleGenerativeAI(model="gemini-1.5-flash", temperature=0.3)
-        # fallback to OpenAI if we want to  prefer:
-        # here return ChatOpenAI(model="gpt-3.5-turbo", temperature=0)
+# Load secrets safely
+OPENAI_API_KEY = st.secrets.get("OPENAI_API_KEY")
+GROQ_API_KEY   = st.secrets.get("GROQ_API_KEY")
+GOOGLE_API_KEY = st.secrets.get("GOOGLE_API_KEY")
+LLM_MODEL      = st.secrets.get("LLM_MODEL", "gpt-3.5-turbo")
 
 
-
-
-# def get_chatgroq_model(model_name="mixtral-8x7b-32768"):
-#     if not GROQ_API_KEY:
-#         raise ValueError("❌ GROQ_API_KEY is missing. Add it to your .env file.")
-#     return ChatGroq(model=model_name, api_key=GROQ_API_KEY)
-
-# Load API keys from environment
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-GROQ_API_KEY = os.getenv("GROQ_API_KEY")
-GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
-
-
-def get_chat_model(provider: str = None, model_name: str = None):
+def get_chat_model(provider="openai"):
     """
-    Returns a chat model client based on provider and available API keys.
-    Priority: user-specified -> environment detection
+    Return a chat model instance for the given provider.
+    Supported: openai, groq, gemini
     """
 
-    # Auto-detect provider if not given
-    if not provider:
-        if OPENAI_API_KEY:
-            provider = "openai"
-        elif GROQ_API_KEY:
-            provider = "groq"
-        elif GOOGLE_API_KEY:
-            provider = "gemini"
-        else:
-            raise ValueError("❌ No API key found for OpenAI, Groq, or Google Gemini")
-
-    # Default models per provider
     if provider == "openai":
-        model_name = model_name or "gpt-3.5-turbo"
-        return ChatOpenAI(model=model_name, api_key=OPENAI_API_KEY)
+        if not OPENAI_API_KEY:
+            raise ValueError("Missing OPENAI_API_KEY in secrets.toml")
+        return ChatOpenAI(
+            openai_api_key=OPENAI_API_KEY,
+            model=LLM_MODEL,  # e.g., gpt-3.5-turbo or gpt-4
+            temperature=0.7
+        )
 
     elif provider == "groq":
-        model_name = model_name or "llama-3.1-8b-instant"
-        return ChatGroq(model=model_name, api_key=GROQ_API_KEY)
+        if not GROQ_API_KEY:
+            raise ValueError("Missing GROQ_API_KEY in secrets.toml")
+        # ✅ Updated Groq model (old Mixtral was deprecated)
+        return ChatGroq(
+            groq_api_key=GROQ_API_KEY,
+            model="llama-3.1-8b-instant",   # use Groq docs for other models
+            temperature=0.7
+        )
 
     elif provider == "gemini":
-        model_name = model_name or "gemini-1.5-flash"
-        return ChatGoogleGenerativeAI(model=model_name, google_api_key=GOOGLE_API_KEY)
+        if not GOOGLE_API_KEY:
+            raise ValueError("Missing GOOGLE_API_KEY in secrets.toml")
+        return ChatGoogleGenerativeAI(
+            google_api_key=GOOGLE_API_KEY,
+            model="gemini-1.5-flash",   # fast + cheaper than Pro
+            temperature=0.7
+        )
 
     else:
-        raise ValueError(f"❌ Unknown provider: {provider}")
-
-
-# Backwards-compatible Groq getter (for your old code)
-def get_chatgroq_model():
-    return get_chat_model(provider="groq")
-
-
+        raise ValueError(f"Unknown provider: {provider}")
