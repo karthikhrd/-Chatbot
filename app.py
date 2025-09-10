@@ -1,321 +1,271 @@
-# import streamlit as st
-# import os
-# import sys
-# from langchain_core.messages import HumanMessage, AIMessage, SystemMessage
-# sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
-# from models.llm import get_chatgroq_model
-
-
-# def get_chat_response(chat_model, messages, system_prompt):
-#     """Get response from the chat model"""
-#     try:
-#         # Prepare messages for the model
-#         formatted_messages = [SystemMessage(content=system_prompt)]
-        
-#         # Add conversation history
-#         for msg in messages:
-#             if msg["role"] == "user":
-#                 formatted_messages.append(HumanMessage(content=msg["content"]))
-#             else:
-#                 formatted_messages.append(AIMessage(content=msg["content"]))
-        
-#         # Get response from model
-#         response = chat_model.invoke(formatted_messages)
-#         return response.content
-    
-#     except Exception as e:
-#         return f"Error getting response: {str(e)}"
-
-# def instructions_page():
-#     """Instructions and setup page"""
-#     st.title("The Chatbot Blueprint")
-#     st.markdown("Welcome! Follow these instructions to set up and use the chatbot.")
-    
-#     st.markdown("""
-#     ## 🔧 Installation
-                
-    
-#     First, install the required dependencies: (Add Additional Libraries base don your needs)
-    
-#     ```bash
-#     pip install -r requirements.txt
-#     ```
-    
-#     ## API Key Setup
-    
-#     You'll need API keys from your chosen provider. Get them from:
-    
-#     ### OpenAI
-#     - Visit [OpenAI Platform](https://platform.openai.com/api-keys)
-#     - Create a new API key
-#     - Set the variables in config
-    
-#     ### Groq
-#     - Visit [Groq Console](https://console.groq.com/keys)
-#     - Create a new API key
-#     - Set the variables in config
-    
-#     ### Google Gemini
-#     - Visit [Google AI Studio](https://aistudio.google.com/app/apikey)
-#     - Create a new API key
-#     - Set the variables in config
-    
-#     ## 📝 Available Models
-    
-#     ### OpenAI Models
-#     Check [OpenAI Models Documentation](https://platform.openai.com/docs/models) for the latest available models.
-#     Popular models include:
-#     - `gpt-4o` - Latest GPT-4 Omni model
-#     - `gpt-4o-mini` - Faster, cost-effective version
-#     - `gpt-3.5-turbo` - Fast and affordable
-    
-#     ### Groq Models
-#     Check [Groq Models Documentation](https://console.groq.com/docs/models) for available models.
-#     Popular models include:
-#     - `llama-3.1-70b-versatile` - Large, powerful model
-#     - `llama-3.1-8b-instant` - Fast, smaller model
-#     - `mixtral-8x7b-32768` - Good balance of speed and capability
-    
-#     ### Google Gemini Models
-#     Check [Gemini Models Documentation](https://ai.google.dev/gemini-api/docs/models/gemini) for available models.
-#     Popular models include:
-#     - `gemini-1.5-pro` - Most capable model
-#     - `gemini-1.5-flash` - Fast and efficient
-#     - `gemini-pro` - Standard model
-    
-#     ## How to Use
-    
-#     1. **Go to the Chat page** (use the navigation in the sidebar)
-#     2. **Start chatting** once everything is configured!
-    
-#     ## Tips
-    
-#     - **System Prompts**: Customize the AI's personality and behavior
-#     - **Model Selection**: Different models have different capabilities and costs
-#     - **API Keys**: Can be entered in the app or set as environment variables
-#     - **Chat History**: Persists during your session but resets when you refresh
-    
-#     ## Troubleshooting
-    
-#     - **API Key Issues**: Make sure your API key is valid and has sufficient credits
-#     - **Model Not Found**: Check the provider's documentation for correct model names
-#     - **Connection Errors**: Verify your internet connection and API service status
-    
-#     ---
-    
-#     Ready to start chatting? Navigate to the **Chat** page using the sidebar! 
-#     """)
-
-# def chat_page():
-#     """Main chat interface page"""
-#     st.title("🤖 AI ChatBot")
-    
-#     # Get configuration from environment variables or session state
-#     # Default system prompt
-#     system_prompt = ""
-    
-    
-#     # Determine which provider to use based on available API keys
-#     chat_model = get_chatgroq_model()
-    
-#     # Initialize chat history
-#     if "messages" not in st.session_state:
-#         st.session_state.messages = []
-    
-#     # Display chat messages
-#     for message in st.session_state.messages:
-#         with st.chat_message(message["role"]):
-#             st.markdown(message["content"])
-    
-#     # Chat input
-#     # if chat_model:
-#     if prompt := st.chat_input("Type your message here..."):
-#         # Add user message to chat history
-#         st.session_state.messages.append({"role": "user", "content": prompt})
-        
-#         # Display user message
-#         with st.chat_message("user"):
-#             st.markdown(prompt)
-        
-#         # Generate and display bot response
-#         with st.chat_message("assistant"):
-#             with st.spinner("Getting response..."):
-#                 response = get_chat_response(chat_model, st.session_state.messages, system_prompt)
-#                 st.markdown(response)
-        
-#         # Add bot response to chat history
-#         st.session_state.messages.append({"role": "assistant", "content": response})
-#     else:
-#         st.info("🔧 No API keys found in environment variables. Please check the Instructions page to set up your API keys.")
-
-# def main():
-#     st.set_page_config(
-#         page_title="LangChain Multi-Provider ChatBot",
-#         page_icon="🤖",
-#         layout="wide",
-#         initial_sidebar_state="expanded"
-#     )
-    
-#     # Navigation
-#     with st.sidebar:
-#         st.title("Navigation")
-#         page = st.radio(
-#             "Go to:",
-#             ["Chat", "Instructions"],
-#             index=0
-#         )
-        
-#         # Add clear chat button in sidebar for chat page
-#         if page == "Chat":
-#             st.divider()
-#             if st.button("🗑️ Clear Chat History", use_container_width=True):
-#                 st.session_state.messages = []
-#                 st.rerun()
-    
-#     # Route to appropriate page
-#     if page == "Instructions":
-#         instructions_page()
-#     if page == "Chat":
-#         chat_page()
-
-# if __name__ == "__main__":
-#     main()
-
 import streamlit as st
 import os
 import sys
+import base64
+import pandas as pd
+from datetime import datetime
+import PyPDF2
+from dotenv import load_dotenv
+
+
+load_dotenv()
+
+
+# Read API keys from .env
+GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY", "")
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
+GROQ_API_KEY   = os.getenv("GROQ_API_KEY", "")
+
+# LangChain core
 from langchain_core.messages import HumanMessage, AIMessage, SystemMessage
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 
-from models.llm import get_chatgroq_model
-from utils.rag_utils import SimpleRAG
-from utils.web_search import serpapi_search
-from config.config import CHUNK_SIZE, CHUNK_OVERLAP
+# Models
+from models.llm import get_chatgroq_model  # Your helper for Groq/OpenAI
+from langchain_google_genai import ChatGoogleGenerativeAI
+
+# LangChain for PDF Q&A
+from PyPDF2 import PdfReader
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_google_genai import GoogleGenerativeAIEmbeddings
+from langchain_community.vectorstores import FAISS
+from langchain.chains.question_answering import load_qa_chain
+from langchain.prompts import PromptTemplate
 
 
-def get_chat_response(chat_model, messages, system_prompt, mode, rag_context="", web_context=""):
-    """Get response from the chat model with RAG + Web context"""
+# ---------------- Utility Functions ----------------
+def get_pdf_text(pdf_docs):
+    text = ""
+    for pdf in pdf_docs:
+        pdf_reader = PdfReader(pdf)
+        for page in pdf_reader.pages:
+            text += page.extract_text()
+    return text
+
+
+def get_text_chunks(text):
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size=10000, chunk_overlap=1000)
+    return text_splitter.split_text(text)
+
+
+def get_vector_store(text_chunks):
+    embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001", google_api_key=GOOGLE_API_KEY)
+    vector_store = FAISS.from_texts(text_chunks, embedding=embeddings)
+    vector_store.save_local("faiss_index")
+    return vector_store
+
+
+def get_pdf_qa_chain():
+    prompt_template = """
+    Answer the question as detailed as possible from the provided context. 
+    If the answer is not in context, reply: "Answer is not available in the context."
+    
+    Context:\n {context}\n
+    Question: \n{question}\n
+
+    Answer:
+    """
+    model = ChatGoogleGenerativeAI(model="gemini-1.5-flash", temperature=0.3, google_api_key=GOOGLE_API_KEY)
+    prompt = PromptTemplate(template=prompt_template, input_variables=["context", "question"])
+    chain = load_qa_chain(model, chain_type="stuff", prompt=prompt)
+    return chain
+
+
+def get_chat_response(chat_model, messages, system_prompt):
+    """General chatbot response"""
     try:
-        # System prompt
         formatted_messages = [SystemMessage(content=system_prompt)]
-
-        # Add history
         for msg in messages:
             if msg["role"] == "user":
                 formatted_messages.append(HumanMessage(content=msg["content"]))
             else:
                 formatted_messages.append(AIMessage(content=msg["content"]))
 
-        # Add RAG + Web context
-        user_query = messages[-1]["content"]
-        final_prompt = f"""
-        Context from docs:
-        {rag_context}
-
-        Context from web:
-        {web_context}
-
-        User question:
-        {user_query}
-
-        Mode: {mode} (Concise = short summary, Detailed = in-depth explanation)
-        """
-        formatted_messages.append(HumanMessage(content=final_prompt))
-
-        # Get response
         response = chat_model.invoke(formatted_messages)
         return response.content
-
     except Exception as e:
         return f"Error getting response: {str(e)}"
 
 
+# ---------------- Pages ----------------
 def instructions_page():
-    """Instructions page"""
-    st.title("📘 The Chatbot Blueprint")
-    st.markdown("Follow instructions in the sidebar to upload docs, set API keys, and start chatting!")
+    st.title("📘 Instructions & Setup")
+    st.markdown("""
+    ## 🔧 Installation
+    ```bash
+    pip install -r requirements.txt
+    ```
+    ## API Keys
+    - Stored in `.env` file (OPENAI, GROQ, GOOGLE)  
+    
+    ## Features
+    - **Chat** with any LLM provider (Groq, OpenAI, Gemini)  
+    - **Ask Questions from PDFs** (Document Q&A)  
+    - **Download conversation history** as CSV  
+
+    Ready? Go to the sidebar → and choose a page! 🚀
+    """)
 
 
 def chat_page():
-    """Main chat interface"""
-    st.title("🤖 AI ChatBot with RAG + Web Search")
+    st.title("🤖 General ChatBot")
 
-    # Sidebar: Upload docs
-    with st.sidebar:
-        st.subheader("📂 Knowledge Base")
-        uploaded = st.file_uploader("Upload PDFs or TXT", type=["pdf", "txt"], accept_multiple_files=True)
-        if uploaded:
-            for f in uploaded:
-                if f.type == "application/pdf":
-                    path = f"/tmp/{f.name}"
-                    with open(path, "wb") as out:
-                        out.write(f.getbuffer())
-                    st.session_state.rag.add_pdf(path)
-                else:
-                    text = f.getvalue().decode("utf-8")
-                    st.session_state.rag.add_text(text, meta={"source": f.name}, chunk_size=CHUNK_SIZE, overlap=CHUNK_OVERLAP)
-            st.success("✅ Files added!")
+    # Use Gemini model by default
+    chat_model = ChatGoogleGenerativeAI(
+        model="gemini-1.5-flash",
+        temperature=0.3,
+        google_api_key=GOOGLE_API_KEY
+    )
 
-        if st.button("Rebuild Index"):
-            st.session_state.rag.build_index()
-            st.success("🔍 Index rebuilt")
-
-        st.divider()
-        mode = st.radio("Response Mode", ["Concise", "Detailed"], index=0)
-
-    # Initialize state
     if "messages" not in st.session_state:
         st.session_state.messages = []
-    if "rag" not in st.session_state:
-        st.session_state.rag = SimpleRAG()
 
-    # Chat history
+    # Display messages
     for message in st.session_state.messages:
         with st.chat_message(message["role"]):
             st.markdown(message["content"])
 
-    # Chat input
-    if prompt := st.chat_input("Type your message..."):
+    if prompt := st.chat_input("Type your message here..."):
         st.session_state.messages.append({"role": "user", "content": prompt})
         with st.chat_message("user"):
             st.markdown(prompt)
 
-        # RAG retrieval
-        results = st.session_state.rag.retrieve(prompt, top_k=3)
-        rag_context = "\n---\n".join([r["text"] for r in results]) if results else ""
-
-        # Web search fallback
-        web_context = ""
-        if not results:
-            web = serpapi_search(prompt, num=2)
-            web_context = "\n".join([w.get("snippet", "") + f" ({w.get('link', '')})" for w in web]) if web else ""
-
-        # AI response
         with st.chat_message("assistant"):
             with st.spinner("Thinking..."):
-                chat_model = get_chatgroq_model()
-                response = get_chat_response(chat_model, st.session_state.messages, "You are a helpful assistant.", mode, rag_context, web_context)
+                response = get_chat_response(chat_model, st.session_state.messages, "")
                 st.markdown(response)
 
         st.session_state.messages.append({"role": "assistant", "content": response})
 
 
+# def pdf_chat_page():
+#     st.title("📄 Chat with Your PDFs")
+
+#     if "conversation_history" not in st.session_state:
+#         st.session_state.conversation_history = []
+
+#     pdf_docs = st.file_uploader("Upload PDF Files", accept_multiple_files=True)
+#     user_question = st.text_input("Ask a question about your PDFs")
+
+#     if user_question and pdf_docs:
+#         text_chunks = get_text_chunks(get_pdf_text(pdf_docs))
+#         vector_store = get_vector_store(text_chunks)
+
+#         embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001", google_api_key=GOOGLE_API_KEY)
+#         new_db = FAISS.load_local("faiss_index", embeddings, allow_dangerous_deserialization=True)
+#         docs = new_db.similarity_search(user_question)
+
+#         chain = get_pdf_qa_chain()
+#         response = chain({"input_documents": docs, "question": user_question}, return_only_outputs=True)
+
+#         st.session_state.conversation_history.append(
+#             (user_question, response["output_text"], datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+#              ", ".join([pdf.name for pdf in pdf_docs]))
+#         )
+
+#     # Display history
+#     for q, a, t, pdfs in reversed(st.session_state.conversation_history):
+#         st.markdown(f"**You:** {q}\n\n**Bot:** {a}\n\n*({t} | PDFs: {pdfs})*")
+
+#     # Download CSV
+#     if len(st.session_state.conversation_history) > 0:
+#         df = pd.DataFrame(st.session_state.conversation_history, columns=["Question", "Answer", "Timestamp", "PDFs"])
+#         csv = df.to_csv(index=False)
+#         b64 = base64.b64encode(csv.encode()).decode()
+#         st.sidebar.markdown(
+#             f'<a href="data:file/csv;base64,{b64}" download="pdf_chat_history.csv">📥 Download History</a>',
+#             unsafe_allow_html=True
+#         )
+def pdf_chat_page():
+    st.title("📄 Chat with Your PDFs")
+
+    if "conversation_history" not in st.session_state:
+        st.session_state.conversation_history = []
+
+    pdf_docs = st.file_uploader("Upload PDF Files", accept_multiple_files=True)
+    user_question = st.text_input("Ask a question about your PDFs")
+
+    if user_question and pdf_docs:
+        # Process PDFs into chunks and vector store
+        text_chunks = get_text_chunks(get_pdf_text(pdf_docs))
+        vector_store = get_vector_store(text_chunks)
+
+        embeddings = GoogleGenerativeAIEmbeddings(
+            model="models/embedding-001",
+            google_api_key=GOOGLE_API_KEY
+        )
+        new_db = FAISS.load_local("faiss_index", embeddings, allow_dangerous_deserialization=True)
+        docs = new_db.similarity_search(user_question)
+
+        # Run QA chain
+        chain = get_pdf_qa_chain()
+        response = chain(
+            {"input_documents": docs, "query": user_question},   # ✅ fixed "question" → "query"
+            return_only_outputs=True
+        )
+
+        # Handle missing/empty responses
+        answer = response.get("output_text", "").strip()
+        if not answer:
+            answer = "⚠️ Sorry, I couldn’t generate a response. Try rephrasing your question."
+
+        # Save to history
+        st.session_state.conversation_history.append(
+            (user_question, answer, datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+             ", ".join([pdf.name for pdf in pdf_docs]))
+        )
+
+    # Display conversation history
+    for q, a, t, pdfs in reversed(st.session_state.conversation_history):
+        st.markdown(f"**You:** {q}\n\n**Bot:** {a}\n\n*({t} | PDFs: {pdfs})*")
+
+    # Download CSV option
+    if st.session_state.conversation_history:
+        df = pd.DataFrame(st.session_state.conversation_history, columns=["Question", "Answer", "Timestamp", "PDFs"])
+        csv = df.to_csv(index=False)
+        b64 = base64.b64encode(csv.encode()).decode()
+        st.sidebar.markdown(
+            f'<a href="data:file/csv;base64,{b64}" download="pdf_chat_history.csv">📥 Download History</a>',
+            unsafe_allow_html=True
+        )
+
+
+# ---------------- Main ----------------
 def main():
-    st.set_page_config(page_title="RAG + Web ChatBot", page_icon="🤖", layout="wide")
+    st.set_page_config(
+        page_title="Unified ChatBot",
+        page_icon="🤖",
+        layout="wide",
+        initial_sidebar_state="expanded"
+    )
 
     with st.sidebar:
         st.title("Navigation")
-        page = st.radio("Go to:", ["Chat", "Instructions"], index=0)
-        if page == "Chat":
-            if st.button("🗑️ Clear Chat", use_container_width=True):
-                st.session_state.messages = []
-                st.rerun()
+        page = st.radio("Go to:", ["Chat", "PDF Chat", "Instructions"], index=0)
 
-    if page == "Instructions":
-        instructions_page()
+        if page == "Chat" and st.button("🗑️ Clear Chat History", use_container_width=True):
+            st.session_state.messages = []
+            st.rerun()
+
+        if page == "PDF Chat" and st.button("🗑️ Clear PDF History", use_container_width=True):
+            st.session_state.conversation_history = []
+            st.rerun()
+
     if page == "Chat":
         chat_page()
+    elif page == "PDF Chat":
+        pdf_chat_page()
+    else:
+        instructions_page()
+
+
+print(PyPDF2.__version__)
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except Exception as e:
+        import traceback
+        print(f"🚨 App crashed: {e}")
+        print(traceback.format_exc())
+

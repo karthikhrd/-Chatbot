@@ -45,8 +45,32 @@
 # models/llm.py
 import os
 from langchain_openai import ChatOpenAI
-from langchain_groq import ChatGroq
 from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_groq import ChatGroq
+from config.config import GROQ_API_KEY
+
+from config.config import GROQ_API_KEY
+from langchain_groq import ChatGroq
+from langchain_openai import ChatOpenAI
+from langchain_google_genai import ChatGoogleGenerativeAI
+
+def get_chatgroq_model(model_name="mixtral-8x7b-32768"):
+    """Get Groq chat model, fallback to Gemini/OpenAI if no key"""
+    if GROQ_API_KEY:
+        return ChatGroq(model=model_name, api_key=GROQ_API_KEY)
+    else:
+        print("⚠️ No GROQ_API_KEY found, falling back to Gemini")
+        return ChatGoogleGenerativeAI(model="gemini-1.5-flash", temperature=0.3)
+        # fallback to OpenAI if we want to  prefer:
+        # here return ChatOpenAI(model="gpt-3.5-turbo", temperature=0)
+
+
+
+
+# def get_chatgroq_model(model_name="mixtral-8x7b-32768"):
+#     if not GROQ_API_KEY:
+#         raise ValueError("❌ GROQ_API_KEY is missing. Add it to your .env file.")
+#     return ChatGroq(model=model_name, api_key=GROQ_API_KEY)
 
 # Load API keys from environment
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
@@ -91,3 +115,5 @@ def get_chat_model(provider: str = None, model_name: str = None):
 # Backwards-compatible Groq getter (for your old code)
 def get_chatgroq_model():
     return get_chat_model(provider="groq")
+
+

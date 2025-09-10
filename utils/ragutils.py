@@ -19,7 +19,7 @@ def build_vectorstore(file_path: str):
     embeddings = get_embeddings()
     return FAISS.from_texts(chunks, embedding=embeddings)
 
-def get_rag_answer(vectorstore, query: str):
+def get_rag_answer(vectorstore, query: str) -> str:
     """Retrieve answer using RAG pipeline with web fallback"""
     retriever = vectorstore.as_retriever()
     llm = get_llm()
@@ -29,6 +29,6 @@ def get_rag_answer(vectorstore, query: str):
     # If answer is too short or generic, fallback to web search
     if not answer or len(answer.strip()) < 10 or "I don't know" in answer:
         web_result = simple_web_search(query)
-        return web_result, "Web"
+        return f"(Fallback Web Search) {web_result}"
     
-    return answer, "Document"
+    return answer
