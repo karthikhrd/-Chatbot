@@ -1,12 +1,48 @@
-# Ignore Python cache
+# ---- Python ----
 __pycache__/
-*.pyc
+*.py[cod]
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
 
-# Ignore environment files
+# ---- Virtual Environments ----
 .env
+.venv
+venv/
+ENV/
+env/
 *.env
 
-# Ignore Streamlit secrets (local only)
+# ---- IDE & Editor ----
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ---- Jupyter ----
+.ipynb_checkpoints/
+*.ipynb_save
+
+# ---- Streamlit ----
 .streamlit/secrets.toml
-.env
-.env
+
+# ---- Logs & Databases ----
+*.log
+*.sqlite3
+*.db
+.cache/
+.pytest_cache/
+coverage/
+
+# ---- Vector Indexes ----
+faiss_index/
+chroma_index/
+
+# ---- Node / Frontend (if you add a React UI later) ----
+node_modules/
+npm-debug.log
+yarn-debug.log
+yarn-error.log
